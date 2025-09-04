@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Customer Churn Analysis</title>
+</head>
+<body>
+    <h1>Upload Your Churn Data File</h1>
+    <form method="POST" enctype="multipart/form-data" action="/">
+        <input type="file" name="file" accept=".csv, .xls, .xlsx, .json, .txt" required>
+        <br><br>
+        <label for="target_col">Target Column Name (optional):</label>
+        <input type="text" name="target_col" id="target_col" placeholder="E.g., Churn, Exited, Label">
+        <br><br>
+        <input type="submit" value="Upload & Process">
+    </form>
+
+    <br>
+
+    <h2>Check Prediction for a Customer</h2>
+    <form method="POST" action="/predict">
+        <label for="cust_id">Customer ID:</label>
+        <input type="text" name="cust_id" id="cust_id" required>
+        <input type="submit" value="Predict Churn">
+    </form>
+
+    <hr>
+
+    {% if message %}
+        <p><strong>{{ message }}</strong></p>
+    {% endif %}
+
+    {% if columns_used %}
+        <h3>Columns Used for Modeling:</h3>
+        <ul>
+            {% for col in columns_used %}
+                <li>{{ col }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    {% if report %}
+        <h2>Model Classification Report</h2>
+        <pre>{{ report | tojson(indent=2) }}</pre>
+    {% endif %}
+
+    {% if accuracy %}
+        <p><strong>Accuracy:</strong> {{ (accuracy * 100) | round(2) }}%</p>
+    {% endif %}
+
+    {% if roc_auc %}
+        <p><strong>ROC AUC Score:</strong> {{ roc_auc }}</p>
+    {% endif %}
+
+    {% if sample_ids %}
+        <h3>Sample Customer IDs:</h3>
+        <ul>
+            {% for cid in sample_ids %}
+                <li>{{ cid }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    {% if customer_data %}
+        <h3>Customer Details:</h3>
+        <table border="1" cellpadding="5" cellspacing="0">
+            <tbody>
+            {% for key, value in customer_data.items() %}
+                <tr>
+                    <th>{{ key }}</th>
+                    <td>{{ value }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+</body>
+</html>
